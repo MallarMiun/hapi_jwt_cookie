@@ -18,6 +18,15 @@ module.exports = (server) => {
     });
 
     server.route({
+        method: 'GET',
+        path: '/users/validate',
+        handler: userController.validateUser,
+        options: {
+            auth: false
+        }
+    });
+
+    server.route({
         method: 'POST',
         path: '/users/login',
         handler: userController.loginUser,

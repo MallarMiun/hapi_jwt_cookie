@@ -85,7 +85,7 @@ exports.loginUser = async (request, h) => {
         const token = generateToken(user); //generera token
 
         return h
-            .response({ message: 'You are now logged in', user: { firstname: user.firstname, lastname: user.lastname, email: user.email } })
+            .response({ message: 'You are now logged in', user: { firstname: user.firstname, lastname: user.lastname, email: user.email }, token })
             .state('jwt', token) //skapa http-cookie
 
     } catch (error) {
@@ -93,6 +93,54 @@ exports.loginUser = async (request, h) => {
         return h.response({ message: error.message }).code(500); // Skicka ett objekt med felmeddelandet
     }
 }
+
+exports.validateUser = async (request, h) => {
+    const authorization = request.headers.authorization;
+
+    if (!authorization) {
+        return h.response({ message: 'Authorization header is missing' }).code(401);
+    }
+
+    const token = authorization.split(' ')[1];
+
+    if (!token) {
+        return h.response({ message: 'Token is missing' }).code(401);
+    }
+
+    console.log('Token:', token);
+
+    try {
+        
+        // Skapa en token-instans först
+        const tokenObject = Jwt.token.decode(token);
+        
+        if (!tokenObject) {
+            return h.response({ message: 'Invalid token format' }).code(401);
+        }
+        
+        // Verifiera token
+        Jwt.token.verify(tokenObject, {
+            key: process.env.JWT_SECRET_KEY,
+            algorithms: ['HS256']
+        });
+        
+        // Om ingen exception kastades är token verifierad
+        // Använd payloaden från den decodade token
+        const decodedToken = tokenObject.decoded.payload;
+        console.log('Decoded token:', decodedToken);
+
+        const user = await User.findById(decodedToken.user._id, { password: 0 });
+
+        if (!user) {
+            return h.response({ message: 'User not found' }).code(404);
+        }
+
+        return h.response({user: user}).code(200);
+    } catch (error) {
+        console.error('JWT verification error:', error);
+        return h.response({ message: 'Invalid token' }).code(401);
+    }
+};
 
     exports.logoutUser = async (request, h) => {
         try {
