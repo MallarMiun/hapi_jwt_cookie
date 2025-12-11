@@ -10,10 +10,10 @@ const init = async () => {
 
     const server = Hapi.server({
         port: 5000,
-        host: 'localhost',
+        host: '0.0.0.0',
         routes: {
             cors: {
-                origin: ['http://localhost:5173', 'https://www.thunderclient.com', 'http://127.0.0.1:5500', 'http://localhost:3000'], // Tillåta domäner
+                origin: ['http://localhost:5173', 'http://127.0.0.1:5500', 'http://localhost:3000', ], // Tillåta domäner
                 credentials: true, // cookies skickas med
                 maxAge: 86400,
                 headers: ["Accept", "Content-Type", "Access-Control-Allow-Origin", "Authorization"]

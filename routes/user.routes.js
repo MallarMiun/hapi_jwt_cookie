@@ -20,10 +20,7 @@ module.exports = (server) => {
     server.route({
         method: 'GET',
         path: '/users/validate',
-        handler: userController.validateUser,
-        options: {
-            auth: false
-        }
+        handler: userController.validateUser
     });
 
     server.route({

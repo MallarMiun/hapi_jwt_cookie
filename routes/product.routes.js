@@ -25,6 +25,7 @@ module.exports = (server) => {
         path: '/products',
         handler: productController.createProduct,
         options: {
+            auth: false,
             validate: {
                 payload: Joi.object({
                     name: Joi.string().min(1).max(50),
