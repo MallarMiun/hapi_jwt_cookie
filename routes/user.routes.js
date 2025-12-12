@@ -6,9 +6,6 @@ module.exports = (server) => {
         method: 'GET',
         path: '/users',
         handler: userController.getAllUsers,
-        options: {
-            auth: false
-        }
     });
 
     server.route({
